@@ -75,10 +75,14 @@ def score_rent():
         else:
             encoded_df = pd.concat([encoded_df, df[column]], axis=1)
 
+    # columns_end_na = []
+    # for column in encoded_df.columns:
+    #     if "99" in column:
+    #         print(column)
     # print(encoded_df.shape)
 
     X = encoded_df.values
-    X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.3, random_state=7)
+    X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.2, random_state=7)
 
     # Standardize the dataset
     pipelines = []
@@ -103,8 +107,8 @@ def score_rent():
         results.append(cv_results)
         names.append(name)
         select_model[name] = cv_results.mean()
-        #msg = "%s: %f (%f)" % (name, cv_results.mean(), cv_results.std())
-        #print(msg)
+        msg = "%s: %f (%f)" % (name, cv_results.mean(), cv_results.std())
+        # print(msg)
 
     take_best_train_model = sorted(select_model.items(), key=operator.itemgetter(1), reverse=True)
 
@@ -125,6 +129,7 @@ def score_rent():
     # print("Best: %f using %s" % (grid_result.best_score_, grid_result.best_params_))
     y_pred = grid.predict(X_test)
     # print(y_pred)
+
     return r2_score(y_test, y_pred), X_test, y_test, grid
 
     # print('mean abs error', mean_absolute_error(y_test, y_pred))
@@ -142,6 +147,6 @@ def predict_rent(X_test, y_test, best_grid):
 
 
 r2_value, X_test, y_test, grid_value = score_rent()
-print(r2_value)
+#print(r2_value)
 
 test_data, true_labels, predicted_labels = predict_rent(X_test, y_test, grid_value)
